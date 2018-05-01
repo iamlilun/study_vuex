@@ -1,27 +1,54 @@
 <template>
   <div>
-    <h1>{{count}}</h1>
+    <h1>{{storeCount}}</h1>
     <button @click="addCount">Add</button>
   </div>
 </template>
 
 <script>
-    /**
-     * 可以在這import store..下面就不用this.$store..但不推薦..
-     * 因為變成每個component都要import..不如就在main引入..下層都能用this.$store
-     */
-//import store from './store';
+
 import {mapState, mapMutations} from 'vuex';
 
 export default {
-    //用工且可以把所有state跟mutations塞進array,不然一個功能一個函式太累
+    data(){
+        return {
+            localCount: 0,
+        }
+    },
+    //用computed取得state..不是用data
     computed: {
-        ...mapState(['count']), //es6語法..把這物件灑出來(@@啥東東?)
-        //這裡可以寫其它的computed
+        //
+        myCount(){
+            return this.localCount;
+        },
+
+        //...語法必須有babel打包才能用
+        //第一種用法..array
+        // ...mapState([
+        //     'count',
+        //     'username',
+        //     'list',
+        // ]),
+
+        //第二種用法object
+        ...mapState({
+           //storeCount: 'count' //key:value用法..storeCount是自己命的名..count是state裡的屬性
+
+          // storeCount(state){ //function用法..用state當參數..回傳state裡的count
+          //     return state.count
+          // }
+
+          //因為沒用到this..所以用箭頭函式..只有一個參數省去小括號..直接return省去大括號..最終進化形
+          storeCount:state => state.count,
+
+          totalCount(state){ //用到this..就不能用箭頭函式
+              return this.localCount + state.count;
+          },
+        }),
     },
     methods: {
         ...mapMutations(['addCount']),
-        //這裡可以寫其它的methods
+
     },
 }
 </script>
