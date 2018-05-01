@@ -5,22 +5,28 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
     state: {
-        count: 0,
-        editor:{
-            text: '',
-        }
+        todos:[],
     },
-
-    //mutations是唯一可以改變state的方法，只能做同步的操作
     mutations : {
-        addCount(state, payload){ //callback..原型為addCount:function(state)..但屬性等於函式時，可以省略function字眼
-            state.count += payload; //函式用法或mapMutations時..直接用payload
-            //state.count += payload.step; //物件用法就是payload.step
-
-            //沒設定state時要用Vue.set來設定
-            //Vue.set(state.editor, 'loading', true);
-            //state.editor = {...state.editor, loading:true}; //es6語法也行..不太懂意思就是.要回頭補點基本功.
+        addCount(state, payload){
+            state.count += payload;
         },
+    },
+    getters:{ //等於store的computed
+        itemsNotDone(state){ //吃state做為參數
+          return state.todos.filter(item => item.done).length;
+        },
+        itemsDone(state, getters){ //在第二個參數注入getters...也可以呼叫自己的function
+            return state.todos.length - getters.itemsNotDone;
+        },
+        // itemsWithID(state){ //也可以再包一層function..吃傳進來的參數
+        //     return (id) => {
+        //         return state.todos.filter(item => item.id === id);
+        //     }
+        // }
+        itemsWithID: state => //最終進化型
+                id => state.todos.filter(item => item.id === id),
+
     },
 });
 
