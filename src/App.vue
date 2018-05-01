@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h1>{{storeCount}}</h1>
-    <button @click="addCount">Add</button>
+    <h1>{{count}}</h1>
+    <!--<button @click="addCount">Add</button>--> <!--methods用1時,直接呼叫addCount-->
+    <!-- <button @click="add(2)">Add</button> --> <!--methods用2時,直接@click物件的key-->
+    <button @click="addCount(2)">Add</button> <!--methods用3時,可以帶參數設定Payload-->
   </div>
 </template>
 
@@ -10,46 +12,35 @@
 import {mapState, mapMutations} from 'vuex';
 
 export default {
-    data(){
-        return {
-            localCount: 0,
-        }
-    },
-    //用computed取得state..不是用data
-    computed: {
-        //
-        myCount(){
-            return this.localCount;
-        },
+    computed: mapState(['count']),
 
-        //...語法必須有babel打包才能用
-        //第一種用法..array
-        // ...mapState([
-        //     'count',
-        //     'username',
-        //     'list',
-        // ]),
+    //用methods呼叫mutations commit變化
 
-        //第二種用法object
-        ...mapState({
-           //storeCount: 'count' //key:value用法..storeCount是自己命的名..count是state裡的屬性
+    //1.原始方式..function
+    //methods: {
+        //addCount(){
+        //第一種用法..函式
+          //this.$store.commit('addCount', 2); //第一個參數為store裡mutations的function, 第二個參數可自訂
 
-          // storeCount(state){ //function用法..用state當參數..回傳state裡的count
-          //     return state.count
-          // }
+          //第二種用法..物件
+          // this.$store.commit({
+          //     type: 'addCount', //type必須是mutations的function
+          //     step: 2, //其它屬性隨你命名跟賦值
+          // });
+        //}
+    //},
 
-          //因為沒用到this..所以用箭頭函式..只有一個參數省去小括號..直接return省去大括號..最終進化形
-          storeCount:state => state.count,
+    //2.沒有要寫其它methods時..就直接用mapMutations包物件
+    // methods: mapMutations({
+    //     add: 'addCount', //key可隨意取.value必須是mutations的function
+    // })
 
-          totalCount(state){ //用到this..就不能用箭頭函式
-              return this.localCount + state.count;
-          },
-        }),
-    },
+    //3.有要寫其它methods時..就用...mapMutations包陣列
     methods: {
-        ...mapMutations(['addCount']),
-
+        ...mapMutations(['addCount']), //直接用mapMutations
     },
+
+
 }
 </script>
 

@@ -4,15 +4,22 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-    state: { //存放狀態,最好把要用到的狀態都預先設定好,即便是空值也沒關係
+    state: {
         count: 0,
-        username: '',
-        list: [],
+        editor:{
+            text: '',
+        }
     },
-    mutations: { //設定mutations
-        addCount(state){
-            state.count += 1;
-            Vue.set(state, 'loading', false); //一開始沒在state設定..就要用Vue.set來設定
+
+    //mutations是唯一可以改變state的方法，只能做同步的操作
+    mutations : {
+        addCount(state, payload){ //callback..原型為addCount:function(state)..但屬性等於函式時，可以省略function字眼
+            state.count += payload; //函式用法或mapMutations時..直接用payload
+            //state.count += payload.step; //物件用法就是payload.step
+
+            //沒設定state時要用Vue.set來設定
+            //Vue.set(state.editor, 'loading', true);
+            //state.editor = {...state.editor, loading:true}; //es6語法也行..不太懂意思就是.要回頭補點基本功.
         },
     },
 });
