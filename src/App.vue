@@ -1,27 +1,46 @@
 <template>
+    <div>
+        <input type="text" v-model="text" />
+        <!--<input type="text" :value="text" @input="setText" />-->
+    </div>
 </template>
 
 <script>
-import {mapState} from 'vuex';
+    import {mapState, mapMutations} from 'vuex';
+    export default {
+        // 1.使用 :value ＋ @input時使用方式
+        // 較囉嗦的寫法
+        // computed: {
+        //     text(){
+        //         return this.$store.state.text;
+        //     }
+        // },
+        // methods: {
+        //     setText(val){
+        //         this.$store.commit('setText', val);
+        //     }
+        // }
+        //----
+        // 較不囉嗦的寫法
+        // computed:{
+        //     ...mapState(['text']),
+        // },
+        // methods:{
+        //     ...mapMutations(['setText']),
+        // },
 
-export default {
-  mounted: {
-      //this.$store.dispatch('fetchList'); //功能同時存在兩個模組..所兩個都會執行
-      //this.$store.dispatch('todos/fetchList'); //module的namespaced設為ture時，就可以用/劃分只執行todos下的fetchList
-
-      ...mapState('todos', [ //第一個參數為namespace
-          'list',
-          'text',
-          'input',
-          'current',
-          'loading',
-      ]),
-      ...mapState('member', [
-          'username',
-          'ranking',
-      ]),
-  }
-}
+        // 2.使用v-model
+        computed: { //將原本的data改用computed並利用get及set操作vuex
+            text: {
+                get(){
+                  return this.$store.state.text;
+                },
+                set(val){
+                  this.$store.commit('setText', val);
+                },
+            }
+        }
+    }
 </script>
 
 <style>
